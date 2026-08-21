@@ -60,12 +60,14 @@ a {
     linear-gradient(135deg, rgba(250, 250, 250, 0.7), rgba(255, 255, 255, 0.92));
 }
 
-.harshil-mask {
-  font-family: var(--font-anton), Anton, Impact, 'Arial Black', sans-serif;
-  font-size: clamp(4.5rem, 18vw, 16rem);
-  font-weight: 400;
-  letter-spacing: 0.04em;
+.hero-title {
+  font-size: clamp(2rem, 5.4vw, 4.85rem);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1.08;
   color: #fff;
   mix-blend-mode: overlay;
-  text-shadow: 0 0 1px rgba(255, 255, 255, 0.4);
+  text-shadow:
+    0 2px 0 rgba(255, 214, 160, 0.28),
+    0 16px 36px rgba(0, 0, 0, 0.28);
 }
