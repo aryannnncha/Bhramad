@@ -1,8 +1,15 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
+import { Anton } from 'next/font/google';
 import './globals.css';
 import { Footer } from '@/components/footer';
 import { Navbar } from '@/components/navbar';
+
+const anton = Anton({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-anton',
+});
 
 export const metadata: Metadata = {
   title: 'Uttarakhand Heritage Explorer',
@@ -12,9 +19,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
   return (
     <html lang="en">
-      <body>
+      <body className={anton.variable}>
         <Navbar />
-        <main>{children}</main>
+        <main className="pt-[4.5rem]">{children}</main>
         <Footer />
       </body>
     </html>
