@@ -31,6 +31,7 @@ const placeSeeds: PlaceSeed[] = [
     lat: 29.9457,
     lng: 78.1642,
     nearbyAlternativeId: 'devprayag',
+    imageUrl: 'https://images.unsplash.com/photo-1561361513-2d000a50f0dc?auto=format&fit=crop&w=1600&q=80',
   },
   {
     id: 'rishikesh',
@@ -265,6 +266,7 @@ const placeSeeds: PlaceSeed[] = [
     lat: 30.7346,
     lng: 79.0669,
     nearbyAlternativeId: 'chopta',
+    imageUrl: 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=1600&q=80',
   },
   {
     id: 'chopta',
@@ -357,6 +359,34 @@ const placeSeeds: PlaceSeed[] = [
     lng: 79.61,
     nearbyAlternativeId: 'valley-of-flowers',
   },
+  {
+    id: 'jageshwar',
+    name: 'Jageshwar',
+    district: 'Almora',
+    category: 'Temples / Architecture',
+    altitudeM: 1870,
+    bestTimeToVisit: 'Oct - Mar',
+    famousFor: 'Cluster of 124 stone temples in a deodar forest',
+    approxDistanceFromDehradunKm: 320,
+    lat: 29.654,
+    lng: 79.608,
+    nearbyAlternativeId: 'katarmal',
+    imageUrl: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?auto=format&fit=crop&w=1600&q=80',
+  },
+  {
+    id: 'katarmal',
+    name: 'Katarmal',
+    district: 'Almora',
+    category: 'Temples / Architecture',
+    altitudeM: 2116,
+    bestTimeToVisit: 'Oct - Mar',
+    famousFor: '11th-century Katarmal Sun Temple with Himalayan views',
+    approxDistanceFromDehradunKm: 305,
+    lat: 29.634,
+    lng: 79.56,
+    nearbyAlternativeId: 'jageshwar',
+    imageUrl: 'https://images.unsplash.com/photo-1605649487212-47bdab064df7?auto=format&fit=crop&w=1600&q=80',
+  },
 ];
 
 export const places: Place[] = placeSeeds.map((seed) => {
@@ -381,10 +411,12 @@ const alternativeMap: Record<string, string> = {
   rishikesh: 'devprayag',
   auli: 'dayara-bugyal',
   'valley-of-flowers': 'har-ki-dun',
-  'badrinath': 'joshimath',
+  badrinath: 'joshimath',
   lansdowne: 'pauri',
   'new-tehri': 'dodital',
   chopta: 'dayara-bugyal',
+  jageshwar: 'katarmal',
+  katarmal: 'jageshwar',
 };
 
 const categoryProfile = (category: string) => {
@@ -420,7 +452,12 @@ export function getAlternativeForPlace(placeId: string) {
 
 export function getCrowdForecastByPlaceId(placeId: string): CrowdForecast {
   const place = getPlaceById(placeId) ?? places[0];
-  const profile = categoryProfile(place.category);
+  const profile =
+    placeId === 'jageshwar'
+      ? [22, 28, 36, 58, 72, 84, 92, 90, 78, 64, 48, 32]
+      : placeId === 'katarmal'
+        ? [8, 10, 12, 16, 18, 22, 28, 30, 24, 18, 14, 10]
+        : categoryProfile(place.category);
 
   return {
     placeId,
@@ -457,7 +494,13 @@ export function getTrafficByPlaceId(placeId: string): TrafficInfo {
 }
 
 export function getItineraryDays(prefs: ItineraryPreferences) {
-  const ordered = places.slice(0, Math.min(6, places.length));
+  const templeBias = prefs.interests.some((item) => ['Temples', 'Architecture', 'Culture'].includes(item));
+  const pool = templeBias
+    ? ['jageshwar', 'katarmal', 'kedarnath', 'badrinath', 'devprayag', 'chopta']
+        .map((id) => places.find((place) => place.id === id))
+        .filter((place): place is Place => Boolean(place))
+    : places.slice(0, 6);
+  const ordered = pool.length ? pool : places.slice(0, 6);
   const itinerary = Array.from({ length: prefs.days }, (_, index) => ({
     day: index + 1,
     title: index === 0 ? 'Arrival and first impressions' : 'Scenic and cultural circuit',
@@ -499,6 +542,33 @@ const assistantByPlaceId: Record<string, AssistantResponse> = Object.fromEntries
 
 export function getAssistantResponse(query: string): AssistantResponse {
   const normalized = query.toLowerCase();
+
+  if (normalized.includes('katarmal')) {
+    return {
+      answer:
+        'Katarmal is famous for its 11th-century Sun Temple above Almora, a quieter architectural alternative when Jageshwar is at peak crowd. The complex sits about 18 km from Jageshwar and currently scores around 90/100 for calm access.',
+      sources: [{ label: 'Verified heritage database' }, { label: 'Almora temple circuit notes' }],
+      matchedPlaceId: 'katarmal',
+    };
+  }
+
+  if (normalized.includes('photo') && normalized.includes('almora')) {
+    return {
+      answer:
+        'Best photo spots near Almora right now: Katarmal’s west-facing stone terrace at golden hour, the deodar edge above Jageshwar before 8 AM, and the Kosi river bend on the descent. Go early to keep people out of the frame.',
+      sources: [{ label: 'Photography window model' }, { label: 'Verified heritage database' }],
+      matchedPlaceId: 'katarmal',
+    };
+  }
+
+  if (normalized.includes('least crowded') || normalized.includes('quiet')) {
+    return {
+      answer:
+        'The least crowded high-value temple on the live board is Katarmal (low crowd, visit score 90/100). Jageshwar is in a high-crowd peak, so the assistant auto-suggests Katarmal, 18 km away.',
+      sources: [{ label: 'Live crowd forecast' }, { label: 'Verified heritage database' }],
+      matchedPlaceId: 'katarmal',
+    };
+  }
   const matched = places.find((place) => normalized.includes(place.name.toLowerCase().split(' ')[0])) ?? places.find((place) => normalized.includes(place.id)) ?? places[0];
 
   return assistantByPlaceId[matched.id] ?? {

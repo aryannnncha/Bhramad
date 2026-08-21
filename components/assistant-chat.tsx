@@ -7,9 +7,8 @@ import { GlassCard } from './glass-card';
 
 const suggestedQuestions = [
   'Why is Katarmal famous?',
-  'What is the best time to visit Jageshwar?',
-  'How crowded is Haridwar during the day?',
-  'Which place is best for photography?'
+  'Best photo spots near Almora?',
+  'Least crowded temple right now?',
 ];
 
 type Message = {
@@ -64,7 +63,7 @@ export function AssistantChat() {
             <button
               key={item}
               type="button"
-              onClick={() => setQuery(item)}
+              onClick={() => send(item)}
               className="rounded-full bg-white/70 px-4 py-2 text-sm text-black/65 transition-all duration-200 hover:bg-white"
             >
               {item}
