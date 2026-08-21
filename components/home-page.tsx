@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from 'react';
 import { ChevronDown, CircleAlert, Compass, Gauge, Search } from 'lucide-react';
 import { GlassCard } from './glass-card';
 import { MotionSection } from './motion-section';
@@ -31,18 +32,40 @@ const problems = [
 ];
 
 export function HomePage() {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    video.muted = true;
+    video.defaultMuted = true;
+    video.setAttribute('muted', '');
+    video.setAttribute('playsinline', '');
+    video.setAttribute('webkit-playsinline', '');
+
+    const tryPlay = () => {
+      void video.play().catch(() => undefined);
+    };
+
+    tryPlay();
+    video.addEventListener('canplay', tryPlay);
+    return () => video.removeEventListener('canplay', tryPlay);
+  }, []);
+
   return (
     <div>
       <section className="relative -mt-[4.5rem] h-screen min-h-[36rem] overflow-hidden">
         <video
+          ref={videoRef}
           className="absolute inset-0 h-full w-full object-cover"
           autoPlay
-          muted
           loop
+          muted
           playsInline
-        >
-          <source src="/mountain.mp4" type="video/mp4" />
-        </video>
+          preload="auto"
+          src="/mountain.mp4"
+        />
         <div className="absolute inset-0 bg-gradient-to-b from-black/35 via-transparent to-black/45" />
 
         <div className="relative z-10 flex h-full flex-col items-center justify-center px-4 text-center">
