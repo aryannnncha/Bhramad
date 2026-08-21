@@ -1,6 +1,7 @@
 "use client";
 
-import { CircleAlert, Compass, Gauge, Search } from 'lucide-react';
+import { useEffect, useRef } from 'react';
+import { ChevronDown, CircleAlert, Compass, Gauge, Search } from 'lucide-react';
 import { GlassCard } from './glass-card';
 import { MotionSection } from './motion-section';
 import { SectionHeading } from './section-heading';
@@ -31,18 +32,40 @@ const problems = [
 ];
 
 export function HomePage() {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    video.muted = true;
+    video.defaultMuted = true;
+    video.setAttribute('muted', '');
+    video.setAttribute('playsinline', '');
+    video.setAttribute('webkit-playsinline', '');
+
+    const tryPlay = () => {
+      void video.play().catch(() => undefined);
+    };
+
+    tryPlay();
+    video.addEventListener('canplay', tryPlay);
+    return () => video.removeEventListener('canplay', tryPlay);
+  }, []);
+
   return (
     <div>
       <section className="relative -mt-[4.5rem] h-screen min-h-[36rem] overflow-hidden">
         <video
+          ref={videoRef}
           className="absolute inset-0 h-full w-full object-cover"
           autoPlay
-          muted
           loop
+          muted
           playsInline
-        >
-          <source src="/mountain.mp4" type="video/mp4" />
-        </video>
+          preload="auto"
+          src="/mountain.mp4"
+        />
         <div className="absolute inset-0 bg-gradient-to-b from-black/35 via-transparent to-black/45" />
 
         <div className="relative z-10 flex h-full flex-col items-center justify-center px-4 text-center">
@@ -50,18 +73,23 @@ export function HomePage() {
             Smart India Hackathon 2026 frontend MVP
           </div>
 
-          <h1 className="harshil-mask mt-4 w-full select-none uppercase leading-none">
-            HARSHIL
+          <h1 className="hero-title mt-8 w-full max-w-5xl select-none px-2">
+            Discover Uttarakhand&apos;s Heritage.
+            <span className="mt-2 block">Experience It Intelligently.</span>
           </h1>
-
-          <p className="mt-4 max-w-3xl text-xl font-semibold tracking-tight text-white drop-shadow-lg sm:text-2xl lg:text-3xl">
-            Discover Uttarakhand&apos;s Heritage. Experience It Intelligently.
-          </p>
         </div>
+
+        <a
+          href="#the-challenge"
+          className="absolute bottom-8 left-1/2 z-10 inline-flex -translate-x-1/2 items-center gap-2 rounded-full border border-white/25 bg-white/15 px-4 py-2 text-[11px] font-medium uppercase tracking-[0.22em] text-white/90 shadow-glass backdrop-blur-xl"
+        >
+          Scroll down
+          <ChevronDown className="h-3.5 w-3.5" />
+        </a>
       </section>
 
       <MotionSection className="px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
-        <div className="mx-auto max-w-7xl">
+        <div id="the-challenge" className="mx-auto max-w-7xl">
           <SectionHeading
             eyebrow="The Challenge"
             title="Heritage tourism breaks when visitors do not get context, timing, and routing together."
