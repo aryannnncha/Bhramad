@@ -14,12 +14,31 @@ const links = [
 
 export function Navbar() {
   const pathname = usePathname();
+  const isHome = pathname === '/';
 
   return (
-    <header className="sticky top-0 z-50 border-b border-black/5 bg-white/70 backdrop-blur-xl">
+    <header
+      className={cn(
+        'fixed top-0 z-50 w-full border-b transition-colors duration-300',
+        isHome
+          ? 'border-white/10 bg-black/10 backdrop-blur-md'
+          : 'border-black/5 bg-white/70 backdrop-blur-xl',
+      )}
+    >
       <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-        <Link href="/" className="flex items-center gap-3 text-sm font-semibold tracking-tight text-ink">
-          <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#B5651D]/10 text-[#B5651D] shadow-glass">
+        <Link
+          href="/"
+          className={cn(
+            'flex items-center gap-3 text-sm font-semibold tracking-tight',
+            isHome ? 'text-white' : 'text-ink',
+          )}
+        >
+          <span
+            className={cn(
+              'flex h-10 w-10 items-center justify-center rounded-2xl shadow-glass',
+              isHome ? 'bg-white/15 text-white' : 'bg-[#B5651D]/10 text-[#B5651D]',
+            )}
+          >
             <Mountain className="h-5 w-5" />
           </span>
           <span className="hidden sm:block">Uttarakhand Heritage Explorer</span>
@@ -34,8 +53,14 @@ export function Navbar() {
                 key={link.href}
                 href={link.href}
                 className={cn(
-                  'rounded-full px-4 py-2 text-sm font-medium transition-all duration-200 hover:bg-black/5',
-                  active ? 'bg-black/5 text-ink' : 'text-black/60',
+                  'rounded-full px-4 py-2 text-sm font-medium transition-all duration-200',
+                  isHome
+                    ? active
+                      ? 'bg-white/15 text-white'
+                      : 'text-white/80 hover:bg-white/10'
+                    : active
+                      ? 'bg-black/5 text-ink'
+                      : 'text-black/60 hover:bg-black/5',
                 )}
               >
                 {link.label}
