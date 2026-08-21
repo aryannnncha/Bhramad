@@ -71,3 +71,12 @@ a {
     0 2px 0 rgba(255, 214, 160, 0.28),
     0 16px 36px rgba(0, 0, 0, 0.28);
 }
+
+@keyframes ticker {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}

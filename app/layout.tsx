@@ -1,8 +1,10 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import './globals.css';
+import { FloatingAssistant } from '@/components/floating-assistant';
 import { Footer } from '@/components/footer';
 import { Navbar } from '@/components/navbar';
+import { PortalProvider } from '@/components/portal-context';
 
 export const metadata: Metadata = {
   title: 'Uttarakhand Heritage Explorer',
@@ -13,9 +15,12 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
   return (
     <html lang="en">
       <body>
-        <Navbar />
-        <main className="pt-[4.5rem]">{children}</main>
-        <Footer />
+        <PortalProvider>
+          <Navbar />
+          <main className="pt-[4.5rem]">{children}</main>
+          <Footer />
+          <FloatingAssistant />
+        </PortalProvider>
       </body>
     </html>
   );
